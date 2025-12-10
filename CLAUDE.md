@@ -96,21 +96,26 @@ dev-dependencies = [
 - **Rich:** Gorgeous terminal output (panels, markdown, syntax highlighting, progress)
 - **uv:** Fast dependency management for students
 
-### Entry Script
+### Installation
 
-`lifegit.py` at repo root provides a simple cross-platform entry point:
+Install `lifegit` as a global command using uv:
 
-```python
-#!/usr/bin/env -S uv run python
-from lifegit.cli import app
-
-if __name__ == "__main__":
-    app()
+```bash
+git clone <repo>
+cd life.git
+uv tool install .
 ```
 
-**Usage:** `./lifegit.py start` (Unix) or `uv run python lifegit.py start` (any platform)
+After installation, `lifegit` is available from anywhere:
 
-**Note:** The uv shebang only works when running from within the project directory (where `pyproject.toml` lives). Students clone the repo and cd into it, so `./lifegit.py start` works naturally.
+```bash
+lifegit start my-life    # Start tutorial in new directory
+cd my-life
+lifegit status           # Check progress
+lifegit validate 1       # Validate Act 1
+```
+
+**For development:** `lifegit.py` at repo root provides a local entry point (`./lifegit.py start`) that works from the project directory.
 
 ### Project Structure
 
@@ -315,21 +320,23 @@ def status(path: Path = Path.cwd()):
 ```
 
 **Directory handling logic:**
-1. `./lifegit.py start my-life` → creates `./my-life/`, cd into it
-2. `./lifegit.py start` (no arg, no repo nearby) → prompts for name, creates dir
-3. `./lifegit.py start` (no arg, existing repo that's not the app) → uses it
+1. `lifegit start my-life` → creates `./my-life/`, cd into it
+2. `lifegit start` (no arg, in app root) → warns, prompts for name, creates dir
+3. `lifegit start` (no arg, in existing repo) → uses it
 
 ## Student Experience Flow
 
 ### Setup
 
 ```bash
-# Clone and enter the tutorial repo
+# Clone and install (one time)
 git clone <tutorial-repo-url>
 cd life.git
+uv tool install .
 
-# Start tutorial (uv auto-syncs dependencies)
-./lifegit.py start my-life
+# Start tutorial from anywhere
+lifegit start my-life
+cd my-life
 ```
 
 ### Menu-Driven Mode (Default)
@@ -407,7 +414,7 @@ Decision committed to history
 For students who want to type git commands directly:
 
 ```bash
-./lifegit.py start my-life --advanced
+lifegit start my-life --advanced
 ```
 
 Shows instructions and hints, validates completion, but student types all git commands manually.

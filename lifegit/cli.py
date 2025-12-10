@@ -157,6 +157,15 @@ def validate(
     path: Path = typer.Option(Path.cwd(), "--path", "-p", help="Path to repository"),
 ):
     """Validate your current exercise"""
+    # Warn if running from app root without explicit path
+    if _is_app_root() and path == Path.cwd():
+        console.print("[yellow]You're in the Life.git app directory.[/yellow]")
+        console.print("[dim]Did you mean to validate your journey folder?[/dim]")
+        console.print()
+        console.print("Try: [cyan]cd my-life && lifegit validate 1[/cyan]")
+        console.print("Or:  [cyan]lifegit validate 1 --path my-life[/cyan]")
+        raise typer.Exit(1)
+
     repo = LifeRepo(path)
 
     acts = {1: Act1, 2: Act2}
@@ -180,6 +189,15 @@ def status(
     path: Path = typer.Option(Path.cwd(), "--path", "-p", help="Path to repository"),
 ):
     """Show your progress through the tutorial"""
+    # Warn if running from app root without explicit path
+    if _is_app_root() and path == Path.cwd():
+        console.print("[yellow]You're in the Life.git app directory.[/yellow]")
+        console.print("[dim]Did you mean to check your journey folder?[/dim]")
+        console.print()
+        console.print("Try: [cyan]cd my-life && lifegit status[/cyan]")
+        console.print("Or:  [cyan]lifegit status --path my-life[/cyan]")
+        raise typer.Exit(1)
+
     repo = LifeRepo(path)
 
     if not repo.is_initialized():
