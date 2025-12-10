@@ -1,10 +1,12 @@
 """CLI entry point for Life.git tutorial"""
 
+import os
 from pathlib import Path
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Prompt
 
 from .git_wrapper import LifeRepo
 from .stages import Act1, Act2
@@ -18,13 +20,70 @@ app = typer.Typer(
 console = Console()
 
 
+def _is_app_root() -> bool:
+    """Check if running from the life.git root directory"""
+    app_root = Path(__file__).parent.parent.resolve()
+    return Path.cwd().resolve() == app_root
+
+
+def _find_or_create_repo_dir(directory: str | None) -> Path:
+    """Determine the repository directory based on argument and current state"""
+    cwd = Path.cwd()
+
+    # Check if running from the app root without specifying a directory
+    if _is_app_root():
+        if directory is None:
+            console.print()
+            console.print("[yellow]You're in the Life.git app directory[/yellow]")
+            console.print(
+                "[dim]Your journey needs its own folder to avoid mixing with the app files.[/dim]"
+            )
+            console.print()
+            directory = Prompt.ask(
+                "What would you like to name your life journey?",
+                default="my-life",
+            )
+            repo_path = cwd / directory
+            if not repo_path.exists():
+                repo_path.mkdir(parents=True)
+                console.print(f"[green]Created directory: {directory}/[/green]")
+            return repo_path
+
+    # If directory argument provided, use it
+    if directory:
+        repo_path = cwd / directory
+        if not repo_path.exists():
+            repo_path.mkdir(parents=True)
+            console.print(f"[green]Created directory: {directory}/[/green]")
+        return repo_path
+
+    # No directory provided and no existing repo - ask for a name
+    console.print()
+    name = Prompt.ask(
+        "What would you like to name your life journey?",
+        default="my-life",
+    )
+
+    repo_path = cwd / name
+    if repo_path.exists():
+        console.print(f"[yellow]Directory '{name}' already exists, using it[/yellow]")
+    else:
+        repo_path.mkdir(parents=True)
+        console.print(f"[green]Created directory: {name}/[/green]")
+
+    return repo_path
+
+
 @app.command()
 def start(
-    path: Path = typer.Option(
-        Path.cwd(),
-        "--path",
-        "-p",
-        help="Path to tutorial repository (defaults to current directory)",
+    directory: str = typer.Argument(
+        None,
+        help="Name of directory for your life repository (created if doesn't exist)",
+    ),
+    advanced: bool = typer.Option(
+        False,
+        "--advanced",
+        help="Advanced mode: type git commands manually instead of using menus",
     ),
 ):
     """Begin your Life.git journey"""
@@ -39,10 +98,22 @@ def start(
             border_style="cyan",
         )
     )
+
+    if advanced:
+        console.print(
+            "[dim]Running in advanced mode - you'll type git commands directly[/dim]"
+        )
+
+    # Determine repository directory
+    repo_path = _find_or_create_repo_dir(directory)
+
+    # Change to repo directory so file operations work correctly
+    os.chdir(repo_path)
+    console.print(f"[dim]Working in: {repo_path}[/dim]")
     console.print()
 
-    # Initialize repository
-    repo = LifeRepo(path)
+    # Create repo wrapper (don't auto-init - Act 1 will guide this)
+    repo = LifeRepo(repo_path, auto_init=False)
 
     # Run through acts
     acts = [Act1, Act2]
@@ -53,7 +124,7 @@ def start(
         )
         console.print(f"[bold yellow]{'═' * 40}[/bold yellow]\n")
 
-        act = ActClass(repo, console)
+        act = ActClass(repo, console, advanced=advanced)
         act.run()
 
         if i < len(acts):
@@ -101,7 +172,7 @@ def validate(
     else:
         console.print(f"[red]✗ Act {act} not complete yet[/red]")
         console.print()
-        stage.instructions()
+        console.print("[dim]Run 'lifegit start' to continue the tutorial.[/dim]")
 
 
 @app.command()

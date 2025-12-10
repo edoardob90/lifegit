@@ -9,12 +9,32 @@ from git.exc import InvalidGitRepositoryError
 class LifeRepo:
     """Abstraction over GitPython providing clean interface for tutorial operations"""
 
-    def __init__(self, path: Path = Path.cwd()):
-        self.path = path
+    def __init__(self, path: Path = Path.cwd(), auto_init: bool = False):
+        self.path = Path(path)
+        self._repo: Repo | None = None
+
         try:
-            self.repo = Repo(path)
+            self._repo = Repo(path)
         except InvalidGitRepositoryError:
-            self.repo = Repo.init(path)
+            if auto_init:
+                self._repo = Repo.init(path)
+            # Otherwise leave _repo as None until init() is called
+
+    @property
+    def repo(self) -> Repo:
+        """Get the underlying Repo object (raises if not initialized)"""
+        if self._repo is None:
+            raise RuntimeError("Repository not initialized. Call init() first.")
+        return self._repo
+
+    def is_git_repo(self) -> bool:
+        """Check if this path is a git repository"""
+        return self._repo is not None
+
+    def init(self) -> "LifeRepo":
+        """Initialize a new git repository"""
+        self._repo = Repo.init(self.path)
+        return self
 
     # Core operations
 
@@ -51,13 +71,29 @@ class LifeRepo:
             return ""
         return str(self.repo.head.commit.message).strip()
 
+    def stage_files(self, files: list[str]):
+        """Stage files for commit"""
+        self.repo.index.add(files)
+
+    @property
+    def untracked_files(self) -> list[str]:
+        """List of untracked files"""
+        return self.repo.untracked_files
+
+    @property
+    def staged_files(self) -> list[str | None]:
+        """List of staged files"""
+        if not self.is_initialized():
+            return [str(entry[0]) for entry in self.repo.index.entries]
+        return [item.a_path for item in self.repo.index.diff("HEAD")]
+
     def has_uncommitted_changes(self) -> bool:
         """Check for uncommitted changes (staged or unstaged)"""
         return self.repo.is_dirty(untracked_files=True)
 
     def has_untracked_files(self) -> bool:
         """Check for untracked files"""
-        return len(self.repo.untracked_files) > 0
+        return len(self.untracked_files) > 0
 
     def current_branch(self) -> str:
         """Get name of current branch"""
