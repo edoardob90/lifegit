@@ -1,0 +1,18 @@
+[project]
+name = "lifegit"
+version = "0.1.0"
+description = "Learn git through life decisions"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "gitpython>=3.1.45",
+    "rich>=14.2.0",
+    "typer>=0.20.0",
+]
+
+[project.scripts]
+lifegit = "lifegit.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
