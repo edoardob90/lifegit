@@ -3,8 +3,7 @@
 from rich.panel import Panel
 from rich.text import Text
 
-from ..content.narratives import ACT1_NARRATIVE
-from ..content.prompts import ACT1_PROMPTS
+from ..content import content
 from ..validator import StageValidator
 from .base import BaseStage, MenuOption
 
@@ -20,7 +19,7 @@ class Act1(BaseStage):
         self.console.print()
         self.console.print(
             Panel(
-                Text(ACT1_NARRATIVE["introduction"]),
+                Text(content.act1.narrative.introduction),
                 title="[bold]Act 1: The First Decision[/bold]",
                 subtitle="[dim]Age 18 — Leaving Home[/dim]",
                 border_style="cyan",
@@ -30,7 +29,7 @@ class Act1(BaseStage):
 
     def run_exercise(self):
         """Run the interactive exercise"""
-        filename = ACT1_PROMPTS["file_name"]
+        filename = content.act1.prompts.file_name
 
         if self.advanced:
             self._run_advanced(filename)
@@ -143,7 +142,7 @@ class Act1(BaseStage):
 
         self.console.print(
             Panel(
-                ACT1_PROMPTS["instructions"],
+                content.act1.prompts.instructions,
                 title="[bold yellow]Your Task[/bold yellow]",
                 border_style="yellow",
                 padding=(1, 2),
@@ -210,7 +209,7 @@ class Act1(BaseStage):
         if not self.repo.is_git_repo():
             return False
 
-        filename = ACT1_PROMPTS["file_name"]
+        filename = content.act1.prompts.file_name
 
         # Must have the file
         if not StageValidator.file_exists(filename, self.repo.path):
@@ -232,7 +231,7 @@ class Act1(BaseStage):
         self.console.print()
         self.console.print(
             Panel(
-                Text(ACT1_NARRATIVE["conclusion"]),
+                Text(content.act1.narrative.conclusion),
                 title="[bold green]Decision Made[/bold green]",
                 border_style="green",
                 padding=(1, 2),

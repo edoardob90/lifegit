@@ -3,8 +3,7 @@
 from rich.panel import Panel
 from rich.text import Text
 
-from ..content.narratives import ACT2_NARRATIVE
-from ..content.prompts import ACT2_PROMPTS
+from ..content import content
 from ..validator import StageValidator
 from .base import BaseStage, MenuOption
 
@@ -20,7 +19,7 @@ class Act2(BaseStage):
         self.console.print()
         self.console.print(
             Panel(
-                Text(ACT2_NARRATIVE["introduction"]),
+                Text(content.act2.narrative.introduction),
                 title="[bold]Act 2: What If?[/bold]",
                 subtitle="[dim]Mid-20s — Exploring Alternatives[/dim]",
                 border_style="cyan",
@@ -37,7 +36,7 @@ class Act2(BaseStage):
 
     def _run_simple(self):
         """Menu-driven flow for beginners"""
-        prefix = ACT2_PROMPTS["branch_prefix"]
+        prefix = content.act2.prompts.branch_prefix
 
         # Step 1: Think about a "what if" and create a branch
         self.console.print()
@@ -190,7 +189,7 @@ class Act2(BaseStage):
         """Traditional flow - student types commands manually"""
         self.console.print(
             Panel(
-                ACT2_PROMPTS["instructions"],
+                content.act2.prompts.instructions,
                 title="[bold yellow]Your Task[/bold yellow]",
                 border_style="yellow",
                 padding=(1, 2),
@@ -201,7 +200,7 @@ class Act2(BaseStage):
             "[dim]Press Enter when you've created a branch, committed to it, and returned to main...[/dim]"
         )
 
-        prefix = ACT2_PROMPTS["branch_prefix"]
+        prefix = content.act2.prompts.branch_prefix
 
         # Wait for completion
         while not self.validate():
@@ -264,7 +263,7 @@ class Act2(BaseStage):
 
     def validate(self) -> bool:
         """Check if the exercise is complete"""
-        prefix = ACT2_PROMPTS["branch_prefix"]
+        prefix = content.act2.prompts.branch_prefix
 
         # Must have created at least one "what-if-" branch
         branches = self.repo.list_branches()
@@ -291,7 +290,7 @@ class Act2(BaseStage):
         self.console.print()
         self.console.print(
             Panel(
-                Text(ACT2_NARRATIVE["conclusion"]),
+                Text(content.act2.narrative.conclusion),
                 title="[bold green]Alternate Timelines Created[/bold green]",
                 border_style="green",
                 padding=(1, 2),

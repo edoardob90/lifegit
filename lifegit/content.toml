@@ -1,7 +1,8 @@
-"""Story narratives for each act"""
+# Life.git Story Content
+# Narratives and prompts for each act of the tutorial
 
-ACT1_NARRATIVE = {
-    "introduction": """You're 18. High school is over.
+[act1.narrative]
+introduction = """You're 18. High school is over.
 
 Your friends are scattered—some to university, some to work, some
 traveling. The question everyone keeps asking: "What's next for you?"
@@ -17,8 +18,9 @@ that comes after.
 Notice that feeling? That slight anxiety, the weight of unmade
 choices? That's what uncommitted changes feel like in git—and in life.
 Files sitting in your working directory, modified but not saved to
-history. Options open, but no forward momentum.""",
-    "conclusion": """You've committed. The decision is made.
+history. Options open, but no forward momentum."""
+
+conclusion = """You've committed. The decision is made.
 
 Notice how that felt? There's a strange relief in commitment, isn't
 there? The anxiety of options gives way to the clarity of direction.
@@ -37,11 +39,32 @@ In git terms:
   Working directory = option paralysis (anxiety)
   git commit       = making the decision (relief, clarity)
 
-You've taken your first step. Your life repository has begun.""",
-}
+You've taken your first step. Your life repository has begun."""
 
-ACT2_NARRATIVE = {
-    "introduction": """A few years have passed. You're in your mid-twenties now.
+[act1.prompts]
+instructions = """Create a file called 'decision.txt' and write your decision inside.
+
+What did you choose? University? Work? Travel? Something else entirely?
+Write it down. Be specific. This is your decision to make.
+
+Then commit it to history:
+
+    git add decision.txt
+    git commit -m "My first decision"
+
+(Feel free to write your own commit message—make it meaningful to you.)"""
+
+hints = [
+    "First, create the file: touch decision.txt (or use your editor)",
+    "Write your decision inside the file",
+    "Stage it: git add decision.txt",
+    "Commit it: git commit -m 'your message here'",
+    "Use 'git status' to see where you are in the process",
+]
+file_name = "decision.txt"
+
+[act2.narrative]
+introduction = """A few years have passed. You're in your mid-twenties now.
 
 The path you chose in Act 1 has led you here—wherever 'here' is for
 you. But lately, you've been wondering: What if?
@@ -56,8 +79,9 @@ other path. But in git? You can. That's what branches are for.
 Branches let you explore alternate timelines without destroying your
 main story. You can ask "what if?" safely, knowing your original path
 is preserved. This is one of git's most powerful features—and one of
-the healthiest ways to think about life choices.""",
-    "conclusion": """You've created alternate timelines.
+the healthiest ways to think about life choices."""
+
+conclusion = """You've created alternate timelines.
 
 Notice something important: your main branch is still there, unchanged.
 The "what if" branches didn't destroy anything—they added possibilities.
@@ -76,5 +100,36 @@ In git terms:
   git checkout = stepping into that alternate timeline
   main branch  = your actual path, always preserved
 
-You now have the power to explore without fear of losing your way.""",
-}
+You now have the power to explore without fear of losing your way."""
+
+[act2.prompts]
+instructions = """Think of a path you didn't take. A "what if?" that still crosses your mind.
+
+Create a branch for that alternate timeline:
+
+    git branch what-if-<your-alternate-path>
+    git checkout what-if-<your-alternate-path>
+
+For example:
+  - git branch what-if-travel
+  - git branch what-if-startup
+  - git branch what-if-stayed-home
+
+Then, on that branch, create a file describing what that life might look like.
+Commit it to that branch.
+
+Finally, switch back to your main branch:
+
+    git checkout main
+
+Your alternate timeline exists now, but you're back on your actual path."""
+
+hints = [
+    "Create a branch: git branch what-if-something",
+    "Switch to it: git checkout what-if-something (or: git switch what-if-something)",
+    "Create a file describing that alternate life",
+    "Commit it: git add <file> && git commit -m 'message'",
+    "Return to main: git checkout main",
+    "See your branches: git branch",
+]
+branch_prefix = "what-if-"
